@@ -37,3 +37,6 @@ class Commune:
         commune = Commune(result.json()[0])
         commune.search_url = result.url
         return commune
+
+    def print_population(self):
+        print(f"Population de la commune de {self.nom}: {self.population} habitants")
