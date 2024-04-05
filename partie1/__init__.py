@@ -48,7 +48,7 @@ class Commune:
         else:
             result = requests.get(default_url, params={"nom": recherche})
             if result.status_code != 200:
-                print("request went wrong")
+                print(f"request went wrong. error: {result.status_code}")
                 return
             elif not result.json():
                 print("Aucun résultat")
@@ -88,7 +88,7 @@ class Departement:
             url = f"https://geo.api.gouv.fr/departements/{dept_code}/communes"
             result = requests.get(url)
             if result.status_code != 200:
-                print("request went wrong")
+                print(f"request went wrong. error: {result.status_code}")
                 return Departement()
             departement = Departement(result.json())
             departement.search_url = result.url
