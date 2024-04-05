@@ -8,7 +8,7 @@ class Commune:
     codeEpci: str = ""
     codeRegion: str = ""
     codesPostaux: list[str] = []
-    population: int = 0
+    population: int = -1
     score: int = 0
     search_url: str = ""
 
@@ -35,14 +35,20 @@ class Commune:
             if result.status_code != 200:
                 print("request went wrong")
                 return
-            commune = Commune(result.json()[0])
-            commune.search_url = result.url
-            return commune
+            elif not result.json():
+                print("Aucun résultat")
+            else:
+                commune = Commune(result.json()[0])
+                commune.search_url = result.url
+                return commune
         else:
             print("Le code postal n'est pas numérique")
+        return Commune()
 
-    def print_population(self):
-        print(f"Population de la commune de {self.nom}: {self.population} habitants")
+    def print_population(self) -> int:
+        if self.population != -1:
+            print(f"Population de la commune de {self.nom}: {self.population} habitants")
+            return self.population
 
 class Departement:
     communes: list[Commune] = []
@@ -63,13 +69,17 @@ class Departement:
             result = requests.get(url)
             if result.status_code != 200:
                 print("request went wrong")
-                return
-            print(result.json())
+                return Departement()
             departement = Departement(result.json())
             departement.search_url = result.url
             return departement
         else:
             print("Le département n'est pas numérique")
 
-
-
+    def print_population(self) -> int:
+        total = 0
+        if self.communes:
+            for commune in self.communes:
+                total += commune.population
+            print(f"Population totale dans le département {self.communes[0].deptCode}: {total} habitants")
+            return total
